@@ -67,10 +67,10 @@
           <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
             <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
 
-    <form action="/edit_profile_pic" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*">
-        <button type="submit">Edit</button>
-    </form>
+<!--    <form action="/edit_profile_pic" method="post" enctype="multipart/form-data">-->
+<!--        <input type="file" name="file" accept="image/*">-->
+<!--        <button type="submit">Edit</button>-->
+<!--    </form>-->
                {% if profile_image %}
                <img src="{{ profile_image }}"  alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
                 style="width: 150px; z-index: 1">
@@ -81,8 +81,14 @@
 <!--              </button>-->
             </div>
             <div class="ms-3" style="margin-top: 130px;">
-              <h5>{{ username }}</h5>
-              <p>India</p>
+<!--                <h5>{{ username }}</h5>-->
+<!--                <p>India</p>-->
+               <form action="/edit_profile_pic" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" accept="image/*">
+                    <button type="submit">Edit</button>
+                </form>
+
+
             </div>
           </div>
           <div class="p-4 text-black bg-body-tertiary">
