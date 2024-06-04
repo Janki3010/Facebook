@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from werkzeug.utils import secure_filename
 import os
+import hashlib
 from passlib.hash import sha256_crypt
 
 
@@ -130,7 +131,9 @@ def index():
 # print(sha256_crypt.verify("password", password))
 
 
-
+# Function to hash the password
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -139,6 +142,7 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        hashed_password = hash_password(password)
         profilepic = request.files['profilepic']
 
         if not validate_email(email):
@@ -161,16 +165,16 @@ def register():
         account = cursor.fetchone()
         if account:
             return 'Account already exists !'
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address !'
+        # elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+        #     msg = 'Invalid email address !'
         elif not re.match(r'[A-Za-z0-9]+', username):
-            msg = 'Username must contain only characters and numbers !'
+            return  'Username must contain only characters and numbers !'
         elif not username or not password or not email:
-            msg = 'Please fill out the form !'
+            return 'Please fill out the form !'
         else:
         # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)  # DictCursor is a cursor class that fetches rows from the database as dictionaries rather tan tuples.
             cursor.execute('INSERT INTO users (username, email, password, profile_image) VALUES (%s,%s, %s, %s)',
-                           (username, email, password, filepath))
+                           (username, email, hashed_password, filepath))
             mysql.connection.commit()
             cursor.close()
 
@@ -185,10 +189,11 @@ def login():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        hashed_password = hash_password(password)
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM users WHERE  username = %s AND email = %s AND password = %s',
-                       (username, email, password))
+        cursor.execute('SELECT * FROM users WHERE  username = %s AND email = %s',
+                       (username, email))
         account = cursor.fetchone()
 
         if account:
@@ -201,6 +206,24 @@ def login():
             return 'Incorrect username/password!'
 
     return render_template('login.html')
+
+@app.route('/forgotPassword')
+def forgotPassword():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = hash_password(password)
+
+        if not validate_password(password):
+            return 'Invalid password'
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM users WHERE email = %s',(email))
+        account = cursor.fetchone()
+        if account:
+            cursor.execute('UPDATE users SET password = %s WHERE email = %s',(hashed_password,email))
+
+    return render_template('forgotPassword.html')
 
 @app.route('/edit_profile_pic', methods=['POST'])
 def edit_profile_pic():
