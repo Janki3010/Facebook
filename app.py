@@ -4,6 +4,8 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from werkzeug.utils import secure_filename
 import os
+from passlib.hash import sha256_crypt
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -21,7 +23,7 @@ def validate_email(email):
 
 
 def validate_password(password):
-    pattern = r'^(?=.\d)(?=.[a-z])(?=.*[A-Z]).{8,}$'
+    pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     return re.match(pattern, password) is not None
 
 
@@ -118,6 +120,18 @@ def index():
     return render_template('index.html')
 
 
+
+# password = sha256_crypt.encrypt("password")
+# password2 = sha256_crypt.encrypt("password")
+#
+# print(password)
+# print(password2)
+#
+# print(sha256_crypt.verify("password", password))
+
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     msg=''
@@ -129,8 +143,8 @@ def register():
 
         if not validate_email(email):
             return 'Invalid email address'
-        # elif not validate_password(password):
-        #     return 'Invalid password'
+        elif not validate_password(password):
+            return 'Invalid password'
 
         if profilepic.filename == '':
             return 'No selected file'
@@ -143,10 +157,10 @@ def register():
             return 'Invalid file type'
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM users WHERE username = % s', (username,))
+        cursor.execute('SELECT * FROM users WHERE username = %s AND email = % s', (username,email))
         account = cursor.fetchone()
         if account:
-            msg = 'Account already exists !'
+            return 'Account already exists !'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
             msg = 'Invalid email address !'
         elif not re.match(r'[A-Za-z0-9]+', username):
@@ -160,8 +174,9 @@ def register():
             mysql.connection.commit()
             cursor.close()
 
+
         return redirect('/login')
-    return render_template('register.html',msg=msg)
+    return render_template('register.html', msg=msg)
 
 
 @app.route('/login', methods=['GET', 'POST'])
