@@ -1,0 +1,167 @@
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--&lt;!&ndash;&lt;!&ndash;<head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <title>Dashboard</title>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .profile-pic {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            border-radius: 50%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 100px; /* Adjust size as needed */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            height: 100px; /* Adjust size as needed */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<body>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <h1>Welcome, {{ username }}!</h1>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;     {% if profile_image %}&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <img src="{{ profile_image }}" alt="Profile Picture" class="profile-pic">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    {% else %}&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <p>No profile picture available</p>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    {% endif %}&ndash;&gt;&ndash;&gt;-->
+<!--   <h2>Your Posts</h2>-->
+<!--    <ul>-->
+<!--       {% for post in user_posts %}-->
+<!--        <li>{{ post.title }}: {{ post.content }}</li>-->
+<!--        {% endfor %}-->
+<!--    </ul>-->
+
+<!--   <h2>Friends' Posts</h2>-->
+<!--   <ul>-->
+<!--        {% for post in friend_posts %}-->
+<!--      <li>{{ post.title }}: {{ post.content }}</li>-->
+<!--       {% endfor %}-->
+<!--   </ul>-->
+
+<!--   <h3>Actions</h3>-->
+<!--    <a href="/addpost">Add Post</a><br><br>-->
+<!--  <form method="post" action="/send_friend_request">-->
+<!--       <input type="text" name="username" placeholder="Enter friend's username" required><br><br>-->
+<!--     <input type="submit" value="Send Friend Request"><br><br>-->
+<!--   </form>&ndash;&gt;&ndash;&gt;-->
+<!--   <a href="/view_friend_requests">View Friend Requests</a><br><br>-->
+<!--   <a href="/logout">Logout</a>-->
+<!--</body>-->
+<!--</html>-->
+<!-- ->-->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+<!-- Google Fonts -->
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  rel="stylesheet"
+/>
+<!-- MDB -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.0/mdb.min.css"
+  rel="stylesheet"
+/>
+
+<!--<link href="../assets/css/style.css" type="text/css" rel="stylesheet"  />-->
+<section class="h-100 gradient-custom-2">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center">
+      <div class="col col-lg-9 col-xl-8">
+        <div class="card">
+          <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+
+    <form action="/edit_profile_pic" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <button type="submit">Edit</button>
+    </form>
+               {% if profile_image %}
+               <img src="{{ profile_image }}"  alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2"
+                style="width: 150px; z-index: 1">
+                {% endif %}
+
+<!--              <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-dark text-body" data-mdb-ripple-color="dark" style="z-index: 1;">-->
+<!--                Profile Update-->
+<!--              </button>-->
+            </div>
+            <div class="ms-3" style="margin-top: 130px;">
+              <h5>{{ username }}</h5>
+              <p>India</p>
+            </div>
+          </div>
+          <div class="p-4 text-black bg-body-tertiary">
+            <div class="d-flex justify-content-end text-center py-1 text-body">
+              <div>
+                <p class="mb-1 h5">253</p>
+                <p class="small text-muted mb-0">Photos</p>
+              </div>
+              <div class="px-3">
+                <p class="mb-1 h5">1026</p>
+                <p class="small text-muted mb-0">Followers</p>
+              </div>
+              <div>
+                <p class="mb-1 h5">478</p>
+                <p class="small text-muted mb-0">Following</p>
+              </div>
+            </div>
+          </div>
+
+<!--            <a href="/dashboard"  class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">See Friends</a>-->
+             <h3>Friends</h3>
+<!--            <button type="button">See Freinds</button>-->
+            <ul>
+                {% for friend in friends %}
+                    <li>{{ friend.username }}</li>
+                {% endfor %}
+            </ul>
+<!--              <a href="/dashboard"  class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">See Friends</a>&ndash;&gt;-->
+             <h3>Friend Suggestion</h3>
+<!--            <button type="button">See Freinds</button>-->
+            <ul>
+                {% for friend in friendsSuggesion %}
+                    <li>{{ friend.username }}</li>
+                {% endfor %}
+            </ul>
+          <div class="card-body p-4 text-black">
+            <div class="mb-5  text-body">
+              <p class="lead fw-normal mb-1">Action</p>
+              <div class="p-4 bg-body-tertiary">
+<!--                <p class="font-italic mb-1">Web Developer</p>-->
+<!--                <p class="font-italic mb-1">Lives in New York</p>-->
+<!--                <p class="font-italic mb-0">Photographer</p>-->
+                   <a href="/addpost" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Add Post</a><br><br>
+                        <form method="post" action="/send_friend_request">
+                          <input type="text" name="username" placeholder="Enter friend's username" required><br><br>
+                          <input type="submit" class="btn btn-outline-info" value="Send Friend Request"><br><br>
+<!--                          <button type="button" class="btn btn-outline-info">Info</button>-->
+                         </form>
+                         <a href="/view_friend_requests" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">View Friend Requests</a><br><br>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4 text-body">
+              <p class="lead fw-normal mb-0">Your Posts</p>
+              <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
+            </div>
+                    <div class="row g-2">
+                      <div class="col mb-2">
+
+<!--                     <h2>Your Posts</h2>-->
+                      <ul>
+                         {% for post in user_posts %}
+                          <li>{{ post.title }}: {{ post.content }}</li>
+                          {% endfor %}
+                      </ul>
+
+<!--                     <h2>Friends' Posts</h2>-->
+                        <p class="lead fw-normal mb-0">Friend's Posts</p>
+                     <ul>
+                          {% for post in friend_posts %}
+                        <li>{{ post.title }}: {{ post.content }}</li>
+                         {% endfor %}
+                     </ul>
+                    </div>
+                  <a href="/logout" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Logout</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
