@@ -182,6 +182,31 @@ def register():
         return redirect('/login')
     return render_template('register.html', msg=msg)
 
+@app.route('/forgotPassword', methods=['GET', 'POST'])
+def forgotPassword():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = hash_password(password)
+
+        if not validate_password(password):
+            return 'Invalid password'
+
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute(f'SELECT * FROM users WHERE email = "{email}"')
+        account = cur.fetchone()
+        print(account)
+        if account:
+            cur.execute('UPDATE facebook.users SET password = %s WHERE email = %s',
+                           (password, email))
+            mysql.connection.commit()
+            cur.close()
+            return redirect('/login')
+        else:
+            return 'User not found'
+
+    return render_template('forgotPassword.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -192,7 +217,7 @@ def login():
         hashed_password = hash_password(password)
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM users WHERE  username = %s AND email = %s',
+        cursor.execute('SELECT * FROM users WHERE  username = %s AND email = %s ',
                        (username, email))
         account = cursor.fetchone()
 
@@ -207,23 +232,6 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/forgotPassword')
-def forgotPassword():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        hashed_password = hash_password(password)
-
-        if not validate_password(password):
-            return 'Invalid password'
-
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM users WHERE email = %s',(email))
-        account = cursor.fetchone()
-        if account:
-            cursor.execute('UPDATE users SET password = %s WHERE email = %s',(hashed_password,email))
-
-    return render_template('forgotPassword.html')
 
 @app.route('/edit_profile_pic', methods=['POST'])
 def edit_profile_pic():
