@@ -226,8 +226,10 @@ def login():
             session['id'] = account['id']
             session['email'] = account['email']
             session['username'] = account['username']
+            flash("You are successfully login")
             return redirect('/dashboard')
         else:
+            flash("Invalid User")
             return 'Incorrect username/password!'
 
     return render_template('login.html')
@@ -235,7 +237,7 @@ def login():
 
 @app.route('/edit_profile_pic', methods=['POST'])
 def edit_profile_pic():
-    if 'loggedin' in session:
+    if 'log gedin' in session:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         if request.method == 'POST':
             # Check if the post request has the file part
@@ -338,6 +340,7 @@ def send_friend_request():
             mysql.connection.commit()
 
         cursor.close()
+
         return redirect('/dashboard')
     return redirect('/login')
 
